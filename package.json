@@ -1,0 +1,24 @@
+{
+  "name": "express-param-valid",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js",
+    "test": "esbuild test/index.ts --bundle --platform=node --sourcemap --outfile=dist/test.js && node dist/test.js",
+    "coverage": "nyc npm run test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.8",
+    "esbuild": "^0.25.0",
+    "nyc": "^17.1.0",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
