@@ -1,6 +1,11 @@
 import { Request } from 'express';
-import { ArgError } from './arg-error';
+import ArgError from './arg-error';
 import ValidBase from './valid-base';
+export { default as paramValidMiddleware } from './valid-middleware';
+export { default as ArgError } from './arg-error';
+export { default as SRouter } from './srouter';
+
+
 
 
 export function body(req:Request, name:string) {

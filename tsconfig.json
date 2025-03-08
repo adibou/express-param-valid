@@ -1,37 +1,11 @@
 {
   "compilerOptions": {
-    /* Basique */
-    "target": "ES2021",                      
-    "module": "ESNext",                      
-    "rootDir": "./src",                      
-    "outDir": "./dist",                      
-
-    /* Gestion des fichiers */
-    "strict": true,                          
-    "esModuleInterop": true,                 
-    "resolveJsonModule": true,               
-    "skipLibCheck": true,                    
-    "forceConsistentCasingInFileNames": true,
-
-    /* Support Node.js */
-    "lib": ["ES2021"],                       
-    "moduleResolution": "node",              
-    "types": ["node"],  
-
-    /* Améliorations de développement */
-    "allowSyntheticDefaultImports": true,    
-    "noImplicitAny": true,                   
-    "strictNullChecks": true,                
-    "strictPropertyInitialization": true,    
-    "noUnusedLocals": true,                  
-    "noUnusedParameters": true,              
-    "noFallthroughCasesInSwitch": true,      
-    "allowUnreachableCode": false,           
-    "allowJs": false,                        
-
-    /* Importations et chemins */
-    "baseUrl": "./src",                      
+    "outDir": "dist",
+    "declaration": true,    
+    "declarationMap": false,
+    "emitDeclarationOnly": true,
+    "moduleResolution": "Node",
+    "strict": true
   },
-  "include": ["src"],                        
-  "exclude": ["node_modules", "dist"]        
+  "include": ["src"]
 }

@@ -1,4 +1,4 @@
-export class ArgError extends Error {
+export default class ArgError extends Error {
     field:string;
 
     constructor(field:string, message:string) {

@@ -1,6 +1,6 @@
 import ArgError from './arg-error';
 
-abstract class BaseStringValidator<Self, ValueType extends string | null | undefined> {
+abstract class BasePasswordValidator<Self, ValueType extends string | null | undefined> {
     protected _value: ValueType;
 
     protected _name: string;
@@ -41,82 +41,75 @@ abstract class BaseStringValidator<Self, ValueType extends string | null | undef
         return this as unknown as Self;
     }
 
-    get email() {
+    get upperCase() {
         if (this.value === null || this.value === undefined) { return this; }
-        if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(this.value)) {  throw new ArgError(this._name, 'email invalid'); }
+        if (!/[A-Z]/.test(this.value)) { throw new ArgError(this._name, 'au moins une majuscule requise'); }
         return this;
     }
 
-    get hasContent() : StringRequiredNotnull {
-        if (this._value === undefined) { throw new ArgError(this._name, 'undefined not allowed'); }
-        if (this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
-        return new StringRequiredNotnull(this._value, this._name).trim.email;
-    }
-
-    pattern( pattern:RegExp) {
+    get lowerCase() {
         if (this.value === null || this.value === undefined) { return this; }
-        if (!pattern.test(this.value)) { throw new ArgError(this._name, 'pattern not matching'); }
+        if (!/[a-z]/.test(this.value)) { throw new ArgError(this._name, 'au moins une minuscule requise'); }
         return this;
     }
 
-    default(def :string) {
-        if (this.value === null || this.value === undefined) { return new StringRequiredNotnull(def, this._name); } else { return new StringRequiredNotnull(this.value, this._name); }
+    get number() {
+        if (this.value === null || this.value === undefined) { return this; }
+        if (!/[0-9]/.test(this.value)) { throw new ArgError(this._name, 'au moins un chiffre requis'); }
+        return this;
     }
 
 
     abstract get value(): ValueType;
 }
 
-export class StringOptionalNullable extends BaseStringValidator<StringOptionalNullable, string | null | undefined> {
+export class PasswordOptionalNullable extends BasePasswordValidator<PasswordOptionalNullable, string | null | undefined> {
 
     constructor(value: unknown, name: string) {
-        if (value === undefined || value === null) { super(value, name); } 
-        else if (Array.isArray(value)) { throw new ArgError(name, 'string required but array received'); } 
-        else if (typeof value === 'object') { throw new ArgError(name, 'string required but object received'); } 
-        else { super(value.toString(), name); }
+        if (value === undefined || value === null) { super(value, name); } else if (Array.isArray(value)) { throw new ArgError(name, 'string required but array received'); } else if (typeof value === 'object') { throw new ArgError(name, 'string required but object received'); } else { super(value.toString(), name); }
     }
 
     get value() : string | null | undefined {
         return this._value;
     }
 
-    get required() : StringRequiredNullable {
+    get required() : PasswordRequiredNullable {
         if (this._value === undefined) { throw new ArgError(this._name, 'string required but undefined recieved'); }
-        return new StringRequiredNullable(this._value, this._name);
+        return new PasswordRequiredNullable(this._value, this._name);
     }
 
-    get notnull() : StringOptionalNotnull {
+    get notnull() : PasswordOptionalNotnull {
         if (this._value === null) { throw new ArgError(this._name, 'string required but null recieved'); }
-        return new StringOptionalNotnull(this._value, this._name);
+        return new PasswordOptionalNotnull(this._value, this._name);
     }
 }
 
-export class StringRequiredNullable extends BaseStringValidator<StringRequiredNullable, string | null> {
+export class PasswordRequiredNullable extends BasePasswordValidator<PasswordRequiredNullable, string | null> {
 
     get value() : string | null {
         return this._value;
     }
 
-    get notnull() : StringRequiredNotnull {
+    get notnull() : PasswordRequiredNotnull {
         if (this._value === null) { throw new ArgError(this._name, 'string required but null recieved'); }
-        return new StringRequiredNotnull(this._value, this._name);
+        return new PasswordRequiredNotnull(this._value, this._name);
     }
 }
 
-export class StringOptionalNotnull extends BaseStringValidator<StringOptionalNotnull, string | undefined> {
+export class PasswordOptionalNotnull extends BasePasswordValidator<PasswordOptionalNotnull, string | undefined> {
 
     get value() : string | undefined {
         return this._value;
     }
 
-    get required() : StringRequiredNotnull {
+    get required() : PasswordRequiredNotnull {
         if (this._value === undefined) { throw new ArgError(this._name, 'string required but undefined recieved'); }
-        return new StringRequiredNotnull(this._value, this._name);
+        return new PasswordRequiredNotnull(this._value, this._name);
     }
 }
 
 
-export class StringRequiredNotnull extends BaseStringValidator<StringRequiredNotnull, string> {
+export class PasswordRequiredNotnull extends BasePasswordValidator<PasswordRequiredNotnull, string> {
     get value() : string {
         return this._value;
     }

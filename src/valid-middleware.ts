@@ -1,7 +1,7 @@
 import { NextFunction, Response, Request } from 'express';
-import { ArgError } from './arg-error';
+import ArgError from './arg-error';
 
-export function catchArgs(err: Error, req: Request, res: Response, next: NextFunction) {
+export default function catchArgs(err: Error, req: Request, res: Response, next: NextFunction) {
     if (err instanceof ArgError) {
         res.status(400).json({
             code: 400,

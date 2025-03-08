@@ -1,0 +1,10 @@
+src
+node_modules
+tsconfig.json
+.vscode
+.nyc_output
+test
+dist/test.js
+dist/test.js.map
+.eslintrc.js
+.eslintignore

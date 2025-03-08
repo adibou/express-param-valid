@@ -1,7 +1,9 @@
-import { ArgError } from "./arg-error";
+import mongoose from 'mongoose';
+import ArgError from './arg-error';
 
-abstract class BaseObjectIdValidator<ValueType extends string | null | undefined> {
+abstract class BaseObjectIdValidator<ValueType extends mongoose.Types.ObjectId | null | undefined> {
     protected _value: ValueType;
+
     protected _name: string;
 
     constructor(value: ValueType, name: string) {
@@ -9,81 +11,63 @@ abstract class BaseObjectIdValidator<ValueType extends string | null | undefined
         this._value = value;
     }
 
-    default(def :string) {
-        if (this.value === null || this.value === undefined) { return new ObjectIdRequiredNotnull(def, this._name); }
-        else { return new ObjectIdRequiredNotnull(this.value, this._name); }
-    }
-
-
     abstract get value(): ValueType;
 }
 
-export class ObjectIdOptionalNullable extends BaseObjectIdValidator<string | null | undefined> {
+export class ObjectIdOptionalNullable extends BaseObjectIdValidator<mongoose.Types.ObjectId | null | undefined> {
 
     constructor(value: unknown, name: string) {
-        if (value === undefined || value === null) { super(value, name); }
-        else if (Array.isArray(value)) { throw new ArgError(name, 'array not allowed'); }
-        else if (typeof value === 'object') { throw new ArgError(name, 'object note allowed'); }
-        else if (!(/^[a-fA-F0-9]{24}$/.test(value.toString()))) { throw new ArgError(name, 'ObjectId required'); }
-        else { super(value.toString(), name); }
+        if (value === undefined || value === null) { super(value, name); } 
+        else if (Array.isArray(value)) { throw new ArgError(name, 'array not allowed'); } 
+        else if (typeof value === 'object') { throw new ArgError(name, 'object note allowed'); } 
+        if (!mongoose.Types.ObjectId.isValid(String(value))) { throw new ArgError(name, 'objectId invalide'); }
+        super(mongoose.Types.ObjectId.createFromHexString(String(value)), name);
     }
 
 
-    get value() : string | null | undefined {
+    get value() : mongoose.Types.ObjectId | null | undefined {
         return this._value;
     }
 
     get required() : ObjectIdRequiredNullable {
-        if(this._value === undefined) { throw new ArgError(this._name, 'udefined not allowed'); }
+        if (this._value === undefined) { throw new ArgError(this._name, 'udefined not allowed'); }
         return new ObjectIdRequiredNullable(this._value, this._name);
     }
 
     get notnull() : ObjectIdOptionalNotnull {
-        if(this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
+        if (this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
         return new ObjectIdOptionalNotnull(this._value, this._name);
     }
 }
 
-export class ObjectIdRequiredNullable extends BaseObjectIdValidator<string | null> {
+export class ObjectIdRequiredNullable extends BaseObjectIdValidator<mongoose.Types.ObjectId | null> {
 
-    constructor(value: string|null, name: string) {
-        super(value, name);
-    }
-
-    get value() : string | null {
+    get value() : mongoose.Types.ObjectId | null {
         return this._value;
     }
 
     get notnull() : ObjectIdRequiredNotnull {
-        if(this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
+        if (this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
         return new ObjectIdRequiredNotnull(this._value, this._name);
     }
 }
 
-export class ObjectIdOptionalNotnull extends BaseObjectIdValidator<string | undefined> {
+export class ObjectIdOptionalNotnull extends BaseObjectIdValidator<mongoose.Types.ObjectId | undefined> {
 
-    constructor(value: string|undefined, name: string) {
-        super(value, name);
-    }
-
-    get value() : string | undefined {
+    get value() : mongoose.Types.ObjectId | undefined {
         return this._value;
     }
 
     get required() : ObjectIdRequiredNotnull {
-        if(this._value === undefined) { throw new ArgError(this._name, 'undefined not allowed'); }
+        if (this._value === undefined) { throw new ArgError(this._name, 'undefined not allowed'); }
         return new ObjectIdRequiredNotnull(this._value, this._name);
     }
 }
 
 
-export class ObjectIdRequiredNotnull extends BaseObjectIdValidator<string> {
+export class ObjectIdRequiredNotnull extends BaseObjectIdValidator<mongoose.Types.ObjectId> {
 
-    constructor(value: string, name: string) {
-        super(value, name);
-    }
-
-    get value() : string {
+    get value() : mongoose.Types.ObjectId {
         return this._value;
     }
 }

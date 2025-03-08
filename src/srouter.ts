@@ -32,7 +32,7 @@ function wrapAsync(fn: AsyncHandler) {
   };
 }
 
-export class SRouter {
+export default class SRouter {
   private router = Router({ mergeParams: true });
 
   post(path: string, handler: AsyncHandler) {
