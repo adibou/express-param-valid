@@ -60,7 +60,8 @@ abstract class BaseStringValidator<Self, ValueType extends string | null | undef
     }
 
     default(def :string) {
-        if (this.value === null || this.value === undefined) { return new StringRequiredNotnull(def, this._name); } else { return new StringRequiredNotnull(this.value, this._name); }
+        if (this.value === null || this.value === undefined) { return new StringRequiredNotnull(def, this._name); } 
+        else { return new StringRequiredNotnull(this.value, this._name); }
     }
 
 

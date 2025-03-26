@@ -20,8 +20,8 @@ export class ObjectIdOptionalNullable extends BaseObjectIdValidator<mongoose.Typ
         if (value === undefined || value === null) { super(value, name); } 
         else if (Array.isArray(value)) { throw new ArgError(name, 'array not allowed'); } 
         else if (typeof value === 'object') { throw new ArgError(name, 'object note allowed'); } 
-        if (!mongoose.Types.ObjectId.isValid(String(value))) { throw new ArgError(name, 'objectId invalide'); }
-        super(mongoose.Types.ObjectId.createFromHexString(String(value)), name);
+        else if (!mongoose.Types.ObjectId.isValid(String(value))) { throw new ArgError(name, 'objectId invalide'); }
+        else { super(mongoose.Types.ObjectId.createFromHexString(String(value)), name); }
     }
 
 

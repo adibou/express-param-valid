@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, Request, Response, NextFunction, RequestHandler } from 'express';
 
 type AsyncHandler = (
   req: Request,
@@ -35,20 +35,21 @@ function wrapAsync(fn: AsyncHandler) {
 export default class SRouter {
   private router = Router({ mergeParams: true });
 
-  post(path: string, handler: AsyncHandler) {
-    this.router.post(path, wrapAsync(handler));
+  post(path: string, handler: AsyncHandler, ...middlewares:RequestHandler[]) {
+    this.router.post(path, ...middlewares, wrapAsync(handler));
   }
 
-  get(path: string, handler: AsyncHandler) {
-    this.router.get(path, wrapAsync(handler));
+
+  get(path: string, handler: AsyncHandler, ...middlewares:RequestHandler[]) {
+    this.router.get(path, ...middlewares, wrapAsync(handler));
   }
 
-  put(path: string, handler: AsyncHandler) {
-    this.router.put(path, wrapAsync(handler));
+  put(path: string, handler: AsyncHandler, ...middlewares:RequestHandler[]) {
+    this.router.put(path, ...middlewares, wrapAsync(handler));
   }
 
-  delete(path: string, handler: AsyncHandler) {
-    this.router.delete(path, wrapAsync(handler));
+  delete(path: string, handler: AsyncHandler, ...middlewares:RequestHandler[]) {
+    this.router.delete(path, ...middlewares, wrapAsync(handler));
   }
 
   getRouter() {

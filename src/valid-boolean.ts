@@ -20,10 +20,14 @@ abstract class BaseBooleanValidator<ValueType extends boolean | null | undefined
 export class BooleanOptionalNullable extends BaseBooleanValidator<boolean | null | undefined> {
 
     constructor(value: unknown, name: string) {
-        if (value === undefined || value === null) { super(value, name); } else if (Array.isArray(value)) { throw new ArgError(name, 'array not allowed'); } else if (typeof value === 'object') { throw new ArgError(name, 'object not allowed'); }
-        
-        if (value === true || value === 1 || value === 'true' || value === '1') { super(true, name); } else if (value === false || value === 0 || value === 'false' || value === '0') { super(false, name); } else {
-            throw new ArgError(name, 'boolean required');
+        if (value === undefined || value === null) { super(value, name); } 
+        else if (Array.isArray(value)) { throw new ArgError(name, 'array not allowed'); } 
+        else if (typeof value === 'object') { throw new ArgError(name, 'object not allowed'); }
+        else {
+            if (value === true || value === 1 || value === 'true' || value === '1') { super(true, name); } 
+            else if (value === false || value === 0 || value === 'false' || value === '0') { super(false, name); } else {
+                throw new ArgError(name, 'boolean required');
+            }
         }
     }
 

@@ -66,7 +66,10 @@ abstract class BasePasswordValidator<Self, ValueType extends string | null | und
 export class PasswordOptionalNullable extends BasePasswordValidator<PasswordOptionalNullable, string | null | undefined> {
 
     constructor(value: unknown, name: string) {
-        if (value === undefined || value === null) { super(value, name); } else if (Array.isArray(value)) { throw new ArgError(name, 'string required but array received'); } else if (typeof value === 'object') { throw new ArgError(name, 'string required but object received'); } else { super(value.toString(), name); }
+        if (value === undefined || value === null) { super(value, name); } 
+        else if (Array.isArray(value)) { throw new ArgError(name, 'string required but array received'); } 
+        else if (typeof value === 'object') { throw new ArgError(name, 'string required but object received'); } 
+        else { super(value.toString(), name); }
     }
 
     get value() : string | null | undefined {

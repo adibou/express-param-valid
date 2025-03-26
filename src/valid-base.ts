@@ -6,6 +6,7 @@ import { NumberArrayOptionalNullable } from './valid-number-array';
 import { ObjectIdOptionalNullable } from './valid-objectid';
 import { PasswordOptionalNullable } from './valid-password';
 import { ObjectIdArrayOptionalNullable } from './valid-objectid-array';
+import { KeyOfOptionalNullable } from './keyof';
 
 export default class ValidBase {
     value: unknown;
@@ -36,4 +37,6 @@ export default class ValidBase {
     get objectIdArray() { return new ObjectIdArrayOptionalNullable(this.value, this.name); }
 
     get password() { return new PasswordOptionalNullable(this.value, this.name); }
+
+    keyof(obj : Record<string, any>) { return new KeyOfOptionalNullable(this.value, this.name, obj); }
 }

@@ -11,7 +11,7 @@ abstract class BaseObjectIdArrayValidator<Self, ValueType extends mongoose.Types
         this._value = value;
     }
 
-    defaultEmptyArray() {
+    get defaultEmptyArray() {
         if (this._value === null || this._value === undefined) { return new ObjectIdArrayRequiredNotnull([], this._name); } 
         else { return new ObjectIdArrayRequiredNotnull(this._value, this._name); }
     }

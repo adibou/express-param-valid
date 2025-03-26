@@ -40,8 +40,9 @@ abstract class BaseNumberValidator<Self, ValueType extends number | null | undef
         return this as unknown as Self;
     }
 
-    default(def :number) {
-        if (this.value === null || this.value === undefined) { new NumberRequiredNotnull(def, this._name); } else { return new NumberRequiredNotnull(this.value, this._name); }
+    default(def :number) : NumberRequiredNotnull {
+        if (this.value === null || this.value === undefined) { return new NumberRequiredNotnull(def, this._name); } 
+        else { return new NumberRequiredNotnull(this.value, this._name); }
     }
 
     abstract get value(): ValueType;
@@ -53,9 +54,11 @@ export class NumberOptionalNullable extends BaseNumberValidator<NumberOptionalNu
         if (value === undefined || value === null) { super(value, name); } 
         else if (Array.isArray(value)) { throw new ArgError(name, 'array not allowed'); } 
         else if (typeof value === 'object') { throw new ArgError(name, 'object not allowed'); }
-        const num = Number(value);
-        if (isNaN(num)) { throw new ArgError(name, 'number required'); } 
-        else { super(num, name); }
+        else {
+            const num = Number(value);
+            if (isNaN(num)) { throw new ArgError(name, 'number required'); } 
+            else { super(num, name); }
+        }
     }
 
     get value() : number | null | undefined {
