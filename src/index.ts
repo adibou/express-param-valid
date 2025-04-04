@@ -3,7 +3,7 @@ import ValidBase from './valid-base';
 export { default as paramValidMiddleware } from './valid-middleware';
 export { default as ArgError } from './arg-error';
 export { default as SRouter } from './srouter';
-
+export { default as ValidBase } from './valid-base';
 
 
 
@@ -21,3 +21,4 @@ export function params(req:any, name:string) {
 function validArgument(obj:Record<string, unknown>, name:string, paramType:'body' | 'params') {
     return new ValidBase(obj[name], name, paramType);
 }
+

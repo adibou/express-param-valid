@@ -7,6 +7,9 @@ import { ObjectIdOptionalNullable } from './valid-objectid';
 import { PasswordOptionalNullable } from './valid-password';
 import { ObjectIdArrayOptionalNullable } from './valid-objectid-array';
 import { KeyOfOptionalNullable } from './keyof';
+import { EnumOptionalNullable } from './valid-enum';
+import { ObjectArrayOptionalNullable } from './valid-object-array';
+import { ObjectOptionalNullable } from './valid-object';
 
 export default class ValidBase {
     value: unknown;
@@ -39,4 +42,11 @@ export default class ValidBase {
     get password() { return new PasswordOptionalNullable(this.value, this.name); }
 
     keyof(obj : Record<string, any>) { return new KeyOfOptionalNullable(this.value, this.name, obj); }
+
+    enum<T>(values:ReadonlyArray<string>) { return new EnumOptionalNullable<T>(this.value, this.name, values); }
+
+    objectArray<T>(validator:(value:any) => T) { return new ObjectArrayOptionalNullable<T>(this.value, this.name, validator); }
+
+    object<T>(validator:(value:any) => T) { return new ObjectOptionalNullable<T>(this.value, this.name, validator); }
+
 }
