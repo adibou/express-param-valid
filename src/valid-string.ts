@@ -1,4 +1,4 @@
-import ArgError from './arg-error';
+import { ArgError } from './arg-error';
 
 abstract class BaseStringValidator<Self, ValueType extends string | null | undefined> {
     protected _value: ValueType;
@@ -12,20 +12,20 @@ abstract class BaseStringValidator<Self, ValueType extends string | null | undef
 
     length(min:number | undefined, max:number | undefined) : Self {
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
-        if (min !== undefined && this._value.length < min) { throw new ArgError(this._name, `minimum string size not reached ${this._value.length} received instead of ${min}`); }
-        if (max !== undefined && this._value.length > max) { throw new ArgError(this._name, `maximum string size exceeded ${this._value.length} received instead of ${max}`); }
+        if (min !== undefined && this._value.length < min) { throw new ArgError('string-min-length', this._name, min.toString()); }
+        if (max !== undefined && this._value.length > max) { throw new ArgError('string-max-length', this._name, max.toString()); }
         return this as unknown as Self;
     }
 
     max(length:number) : Self {
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
-        if (this._value.length > length) { throw new ArgError(this._name, `maximum string size exceeded ${this._value.length} received instead of ${length}`); }
+        if (this._value.length > length) { throw new ArgError('string-max-length', this._name, length.toString()); }
         return this as unknown as Self;
     }
 
     min(length:number) : Self {
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
-        if (this._value.length < length) { throw new ArgError(this._name, `minimum string size not reached ${this._value.length} received instead of ${length}`); }
+        if (this._value.length < length) { throw new ArgError('string-min-length', this._name, length.toString()); }
         return this as unknown as Self;
     }
 
@@ -37,25 +37,25 @@ abstract class BaseStringValidator<Self, ValueType extends string | null | undef
 
     get notEmpty() {
         if (this.value === null || this.value === undefined) { return this as unknown as Self; }
-        if (this.value === '') { throw new ArgError(this._name, 'empty string not autorized'); }
+        if (this.value === '') { throw new ArgError('string-min-length', this._name, '1'); }
         return this as unknown as Self;
     }
 
     get email() {
         if (this.value === null || this.value === undefined) { return this; }
-        if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(this.value)) {  throw new ArgError(this._name, 'email invalid'); }
+        if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(this.value)) {  throw new ArgError('email-required', this._name); }
         return this;
     }
 
     get hasContent() : StringRequiredNotnull {
-        if (this._value === undefined) { throw new ArgError(this._name, 'undefined not allowed'); }
-        if (this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
+        if (this._value === undefined) { throw new ArgError('undefined-not-allowed', this._name); }
+        if (this._value === null) { throw new ArgError('null-not-allowed', this._name); }
         return new StringRequiredNotnull(this._value, this._name).trim.email;
     }
 
     pattern( pattern:RegExp) {
         if (this.value === null || this.value === undefined) { return this; }
-        if (!pattern.test(this.value)) { throw new ArgError(this._name, 'pattern not matching'); }
+        if (!pattern.test(this.value)) { throw new ArgError('pattern-not-matching', this._name); }
         return this;
     }
 
@@ -72,8 +72,8 @@ export class StringOptionalNullable extends BaseStringValidator<StringOptionalNu
 
     constructor(value: unknown, name: string) {
         if (value === undefined || value === null) { super(value, name); } 
-        else if (Array.isArray(value)) { throw new ArgError(name, 'string required but array received'); } 
-        else if (typeof value === 'object') { throw new ArgError(name, 'string required but object received'); } 
+        else if (Array.isArray(value)) { throw new ArgError('array-not-allowed', name); }
+        else if (typeof value === 'object') { throw new ArgError('object-not-allowed', name); }
         else { super(value.toString(), name); }
     }
 
@@ -82,12 +82,12 @@ export class StringOptionalNullable extends BaseStringValidator<StringOptionalNu
     }
 
     get required() : StringRequiredNullable {
-        if (this._value === undefined) { throw new ArgError(this._name, 'string required but undefined recieved'); }
+        if (this._value === undefined) { throw new ArgError('undefined-not-allowed', this._name); }
         return new StringRequiredNullable(this._value, this._name);
     }
 
     get notnull() : StringOptionalNotnull {
-        if (this._value === null) { throw new ArgError(this._name, 'string required but null recieved'); }
+        if (this._value === null) { throw new ArgError('null-not-allowed', this._name); }
         return new StringOptionalNotnull(this._value, this._name);
     }
 }
@@ -99,7 +99,7 @@ export class StringRequiredNullable extends BaseStringValidator<StringRequiredNu
     }
 
     get notnull() : StringRequiredNotnull {
-        if (this._value === null) { throw new ArgError(this._name, 'string required but null recieved'); }
+        if (this._value === null) { throw new ArgError('null-not-allowed', this._name); }
         return new StringRequiredNotnull(this._value, this._name);
     }
 }
@@ -111,7 +111,7 @@ export class StringOptionalNotnull extends BaseStringValidator<StringOptionalNot
     }
 
     get required() : StringRequiredNotnull {
-        if (this._value === undefined) { throw new ArgError(this._name, 'string required but undefined recieved'); }
+        if (this._value === undefined) { throw new ArgError('undefined-not-allowed', this._name); }
         return new StringRequiredNotnull(this._value, this._name);
     }
 }

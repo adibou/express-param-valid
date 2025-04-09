@@ -1,4 +1,4 @@
-import ArgError from './arg-error';
+import { ArgError } from './arg-error';
 
 abstract class BaseObjectArrayValidator<T, ValueType extends T[] | null | undefined> {
     protected _value: ValueType;
@@ -23,7 +23,7 @@ export class ObjectArrayOptionalNullable<T> extends BaseObjectArrayValidator<T, 
 
     constructor(value: unknown, name: string, validator: (value:any) => T) {
         if (value === undefined || value === null) { super(value, name); } 
-        else if (!Array.isArray(value)) { throw new ArgError(name, 'array required'); } 
+        else if (!Array.isArray(value)) { throw new ArgError('array-required', name); }
         else { 
             const arr:T[] = [];
             value.forEach(v => {
@@ -39,12 +39,12 @@ export class ObjectArrayOptionalNullable<T> extends BaseObjectArrayValidator<T, 
     }
 
     get required() : ObjectArrayRequiredNullable<T> {
-        if (this._value === undefined) { throw new ArgError(this._name, 'udefined not allowed'); }
+        if (this._value === undefined) { throw new ArgError('undefined-not-allowed', this._name); }
         return new ObjectArrayRequiredNullable(this._value, this._name);
     }
 
     get notnull() : ObjectArrayOptionalNotnull<T> {
-        if (this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
+        if (this._value === null) { throw new ArgError('null-not-allowed', this._name); }
         return new ObjectArrayOptionalNotnull(this._value, this._name);
     }
 }
@@ -56,7 +56,7 @@ export class ObjectArrayRequiredNullable<T> extends BaseObjectArrayValidator<T, 
     }
 
     get notnull() : ObjectArrayRequiredNotnull<T> {
-        if (this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
+        if (this._value === null) { throw new ArgError('null-not-allowed', this._name); }
         return new ObjectArrayRequiredNotnull(this._value, this._name);
     }
 }
@@ -68,7 +68,7 @@ export class ObjectArrayOptionalNotnull<T> extends BaseObjectArrayValidator<T, T
     }
 
     get required() : ObjectArrayRequiredNotnull<T> {
-        if (this._value === undefined) { throw new ArgError(this._name, 'undefined not allowed'); }
+        if (this._value === undefined) { throw new ArgError('undefined-not-allowed', this._name); }
         return new ObjectArrayRequiredNotnull(this._value, this._name);
     }
 }

@@ -1,16 +1,16 @@
-import ArgError from './arg-error';
+import { ArgError } from './arg-error';
 import ValidBase from './valid-base';
 export { default as paramValidMiddleware } from './valid-middleware';
-export { default as ArgError } from './arg-error';
+export { default as FullArgError } from './arg-error';
 export { default as SRouter } from './srouter';
 export { default as ValidBase } from './valid-base';
-
+export { ArgError, errorCodes } from './arg-error';
 
 
 export function body(req:any, name:string) {
-    if (req.body === undefined) {  throw new ArgError('body', 'undefined reçu, objet attendu' ); }
-    if (req.body === null) { throw new ArgError('body', 'null reçu, object attendu'); }
-    if (Array.isArray(req.body)) { throw new ArgError('body', 'Array reçu, object attendu');  }
+    if (req.body === undefined) {  throw new ArgError('body-undefined'); }
+    if (req.body === null) { throw new ArgError('body-null'); }
+    if (Array.isArray(req.body)) { throw new ArgError('body-array');  }
     return validArgument(req.body, name, 'body');
 }
 

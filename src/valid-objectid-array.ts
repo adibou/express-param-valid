@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import ArgError from './arg-error';
+import { ArgError } from './arg-error';
 
 abstract class BaseObjectIdArrayValidator<Self, ValueType extends mongoose.Types.ObjectId[] | null | undefined> {
     protected _value: ValueType;
@@ -18,19 +18,19 @@ abstract class BaseObjectIdArrayValidator<Self, ValueType extends mongoose.Types
 
     maxArrayLength(length:number) : Self {
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
-        if (this._value.length > length) { throw new ArgError(this._name, `maximum array length exceeded ${this._value.length} received instead of ${length}`); }
+        if (this._value.length > length) { throw new ArgError('array-max-length', this._name, length.toString()); }
         return this as unknown as Self;
     }
 
     minArrayLength(length:number) : Self {
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
-        if (this._value.length < length) { throw new ArgError(this._name, `minimum array length not reached ${this._value.length} received instead of ${length}`); }
+        if (this._value.length < length) { throw new ArgError('array-min-length', this._name, length.toString()); }
         return this as unknown as Self;
     }
 
     get notEmptyArray() : Self {
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
-        if (this._value.length === 0) { throw new ArgError(this._name, 'empty array not autorized'); }
+        if (this._value.length === 0) { throw new ArgError('array-not-empty', this._name); }
         return this as unknown as Self;
     }
 
@@ -41,13 +41,13 @@ export class ObjectIdArrayOptionalNullable extends BaseObjectIdArrayValidator<Ob
 
     constructor(value: unknown, name: string) {
         if (value === undefined || value === null) { super(value, name); } 
-        else if (!Array.isArray(value)) { throw new ArgError(name, 'array required'); } 
+        else if (!Array.isArray(value)) { throw new ArgError('array-required') } 
         else { 
             const arr:mongoose.Types.ObjectId[] = [];
             value.filter(v => v !== null && v !== undefined).forEach(v => {
-                if (Array.isArray(v)) { throw new ArgError(name, 'array not allowed inside this array'); }
-                if (typeof v === 'object') { throw new ArgError(name, 'object not allowed inside this array'); }
-                if (!mongoose.Types.ObjectId.isValid(v.toString())) { throw new ArgError(name, 'one element is not a valid objectId'); }
+                if (Array.isArray(v)) { throw new ArgError('item-array-not-allowed', name) }
+                if (typeof v === 'object') { throw new ArgError('item-object-not-allowed', name) }
+                if (!mongoose.Types.ObjectId.isValid(v.toString())) { throw new ArgError('item-objectid-required', name) }
                 arr.push(mongoose.Types.ObjectId.createFromHexString(v.toString()));
             });
             super(arr, name);
@@ -60,12 +60,12 @@ export class ObjectIdArrayOptionalNullable extends BaseObjectIdArrayValidator<Ob
     }
 
     get required() : ObjectIdArrayRequiredNullable {
-        if (this._value === undefined) { throw new ArgError(this._name, 'udefined not allowed'); }
+        if (this._value === undefined) { throw new ArgError('undefined-not-allowed', this._name); }
         return new ObjectIdArrayRequiredNullable(this._value, this._name);
     }
 
     get notnull() : ObjectIdArrayOptionalNotnull {
-        if (this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
+        if (this._value === null) { throw new ArgError('null-not-allowed', this._name); }
         return new ObjectIdArrayOptionalNotnull(this._value, this._name);
     }
 }
@@ -77,7 +77,7 @@ export class ObjectIdArrayRequiredNullable extends BaseObjectIdArrayValidator<Ob
     }
 
     get notnull() : ObjectIdArrayRequiredNotnull {
-        if (this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
+        if (this._value === null) { throw new ArgError('null-not-allowed', this._name); }
         return new ObjectIdArrayRequiredNotnull(this._value, this._name);
     }
 }
@@ -89,7 +89,7 @@ export class ObjectIdArrayOptionalNotnull extends BaseObjectIdArrayValidator<Obj
     }
 
     get required() : ObjectIdArrayRequiredNotnull {
-        if (this._value === undefined) { throw new ArgError(this._name, 'undefined not allowed'); }
+        if (this._value === undefined) { throw new ArgError('undefined-not-allowed', this._name); }
         return new ObjectIdArrayRequiredNotnull(this._value, this._name);
     }
 }

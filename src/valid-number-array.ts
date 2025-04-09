@@ -1,4 +1,4 @@
-import ArgError from './arg-error';
+import { ArgError } from './arg-error';
 
 abstract class BaseNumberArrayValidator<Self, ValueType extends number[] | null | undefined> {
     protected _value: ValueType;
@@ -13,7 +13,7 @@ abstract class BaseNumberArrayValidator<Self, ValueType extends number[] | null 
     max(length:number) : Self {
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
         this._value.forEach(val => {
-            if (val > length) { throw new ArgError(this._name, `maximum exceeded ${val} received instead of ${length}`); }
+            if (val > length) { throw new ArgError('number-max-value', this._name, length.toString()); }
         });
         return this as unknown as Self;
     }
@@ -21,7 +21,7 @@ abstract class BaseNumberArrayValidator<Self, ValueType extends number[] | null 
     min(length:number) : Self {
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
         this._value.forEach(val => {
-            if (val < length) { throw new ArgError(this._name, `minimum not reached ${val} received instead of ${length}`); }
+            if (val < length) { throw new ArgError('number-min-value', this._name, length.toString()); }
         });
         return this as unknown as Self;
     }
@@ -29,7 +29,7 @@ abstract class BaseNumberArrayValidator<Self, ValueType extends number[] | null 
     get positive() { 
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
         this._value.forEach(val => {
-            if (val < 0) { throw new ArgError(this._name, 'number must be positive'); }
+            if (val < 0) { throw new ArgError('number-min-value', this._name, '0'); }
         });
         return this as unknown as Self;
     }
@@ -37,7 +37,7 @@ abstract class BaseNumberArrayValidator<Self, ValueType extends number[] | null 
     get negative() {
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
         this._value.forEach(val => {
-            if (val > 0) { throw new ArgError(this._name, 'number must be negative'); }
+            if (val > 0) { throw new ArgError('number-max-value', this._name, '0'); }
         });
         return this as unknown as Self;
     }
@@ -45,7 +45,7 @@ abstract class BaseNumberArrayValidator<Self, ValueType extends number[] | null 
     get integer() {
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
         this._value.forEach(val => {
-            if (!Number.isSafeInteger(val)) { throw new ArgError(this._name, 'number must be integer'); }
+            if (!Number.isSafeInteger(val)) { throw new ArgError('number-not-integer', this._name); }
         });
         return this as unknown as Self;
     }
@@ -56,19 +56,19 @@ abstract class BaseNumberArrayValidator<Self, ValueType extends number[] | null 
 
     maxArrayLength(length:number) : Self {
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
-        if (this._value.length > length) { throw new ArgError(this._name, `maximum array length exceeded ${this._value.length} received instead of ${length}`); }
+        if (this._value.length > length) { throw new ArgError('array-max-length', this._name, length.toString()); }
         return this as unknown as Self;
     }
 
     minArrayLength(length:number) : Self {
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
-        if (this._value.length < length) { throw new ArgError(this._name, `minimum array length not reached ${this._value.length} received instead of ${length}`); }
+        if (this._value.length < length) { throw new ArgError('array-min-length', this._name, length.toString()); }
         return this as unknown as Self;
     }
 
     get notEmptyArray() : Self {
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
-        if (this._value.length === 0) { throw new ArgError(this._name, 'empty array not autorized'); }
+        if (this._value.length === 0) { throw new ArgError('array-not-empty', this._name); }
         return this as unknown as Self;
     }
 
@@ -79,14 +79,14 @@ export class NumberArrayOptionalNullable extends BaseNumberArrayValidator<Number
 
     constructor(value: unknown, name: string) {
         if (value === undefined || value === null) { super(value, name); } 
-        else if (!Array.isArray(value)) { throw new ArgError(name, 'array required'); } 
+        else if (!Array.isArray(value)) { throw new ArgError('array-required', name); }
         else { 
             const arr:number[] = [];
             value.filter(v => v !== null && v !== undefined).forEach(v => {
-                if (Array.isArray(v)) { throw new ArgError(name, 'array not allowed inside this array'); }
-                if (typeof v === 'object') { throw new ArgError(name, 'object not allowed inside this array'); }
+                if (Array.isArray(v)) { throw new ArgError('item-array-not-allowed', name); }
+                if (typeof v === 'object') { throw new ArgError('item-object-not-allowed', name); }
                 const num = Number(value);
-                if (isNaN(num)) { throw new ArgError(name, 'one item is not a number'); } 
+                if (isNaN(num)) { throw new ArgError('item-number-required', name); }
                 arr.push(num);
             });
             super(arr, name);
@@ -98,12 +98,12 @@ export class NumberArrayOptionalNullable extends BaseNumberArrayValidator<Number
     }
 
     get required() : NumberArrayRequiredNullable {
-        if (this._value === undefined) { throw new ArgError(this._name, 'undefined not allowed'); }
+        if (this._value === undefined) { throw new ArgError('undefined-not-allowed', this._name); }
         return new NumberArrayRequiredNullable(this._value, this._name);
     }
 
     get notnull() : NumberArrayOptionalNotnull {
-        if (this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
+        if (this._value === null) { throw new ArgError('null-not-allowed', this._name); }   
         return new NumberArrayOptionalNotnull(this._value, this._name);
     }
 }
@@ -115,7 +115,7 @@ export class NumberArrayRequiredNullable extends BaseNumberArrayValidator<Number
     }
 
     get notnull() : NumberArrayRequiredNotnull {
-        if (this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
+        if (this._value === null) { throw new ArgError('null-not-allowed', this._name); }
         return new NumberArrayRequiredNotnull(this._value, this._name);
     }
 }
@@ -127,7 +127,7 @@ export class NumberArrayOptionalNotnull extends BaseNumberArrayValidator<NumberA
     }
 
     get required() : NumberArrayRequiredNotnull {
-        if (this._value === undefined) { throw new ArgError(this._name, 'undefined not allowed'); }
+        if (this._value === undefined) { throw new ArgError('undefined-not-allowed', this._name); }
         return new NumberArrayRequiredNotnull(this._value, this._name);
     }
 }

@@ -1,5 +1,4 @@
-import mongoose from 'mongoose';
-import ArgError from './arg-error';
+import { ArgError } from './arg-error';
 
 abstract class BaseKeyOfValidator<ValueType extends string| null | undefined> {
     protected _value: ValueType;
@@ -19,9 +18,9 @@ export class KeyOfOptionalNullable extends BaseKeyOfValidator<string | null | un
 
     constructor(value: unknown, name: string, obj: Record<string, any>) {
         if (value === undefined || value === null) { super(value, name); }
-        else if (Array.isArray(value)) { throw new ArgError(name, 'string required but array received'); }
-        else if (typeof value === 'object') { throw new ArgError(name, 'string required but object received'); }
-        else if (Object.keys(obj).indexOf(value.toString()) === -1) { throw new ArgError(name, 'invalid key'); }
+        else if (Array.isArray(value)) { throw new ArgError('array-not-allowed', name); }
+        else if (typeof value === 'object') { throw new ArgError('object-not-allowed', name); }
+        else if (Object.keys(obj).indexOf(value.toString()) === -1) { throw new ArgError('invalid-key', name); }
         else { super(value.toString(), name); }
     }
 
@@ -31,12 +30,12 @@ export class KeyOfOptionalNullable extends BaseKeyOfValidator<string | null | un
     }
 
     get required() : KeyOfRequiredNullable {
-        if (this._value === undefined) { throw new ArgError(this._name, 'udefined not allowed'); }
+        if (this._value === undefined) { throw new ArgError('undefined-not-allowed', this._name); }
         return new KeyOfRequiredNullable(this._value, this._name);
     }
 
     get notnull() : KeyOfOptionalNotnull {
-        if (this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
+        if (this._value === null) { throw new ArgError('null-not-allowed', this._name); }
         return new KeyOfOptionalNotnull(this._value, this._name);
     }
 }
@@ -48,7 +47,7 @@ export class KeyOfRequiredNullable extends BaseKeyOfValidator<string | null> {
     }
 
     get notnull() : KeyOfRequiredNotnull {
-        if (this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
+        if (this._value === null) { throw new ArgError('null-not-allowed', this._name); }
         return new KeyOfRequiredNotnull(this._value, this._name);
     }
 }
@@ -60,7 +59,7 @@ export class KeyOfOptionalNotnull extends BaseKeyOfValidator<string | undefined>
     }
 
     get required() : KeyOfRequiredNotnull {
-        if (this._value === undefined) { throw new ArgError(this._name, 'undefined not allowed'); }
+        if (this._value === undefined) { throw new ArgError('undefined-not-allowed', this._name); }
         return new KeyOfRequiredNotnull(this._value, this._name);
     }
 }

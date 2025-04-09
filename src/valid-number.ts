@@ -1,4 +1,4 @@
-import ArgError from './arg-error';
+import { ArgError } from './arg-error';
 
 abstract class BaseNumberValidator<Self, ValueType extends number | null | undefined> {
     protected _value: ValueType;
@@ -12,31 +12,31 @@ abstract class BaseNumberValidator<Self, ValueType extends number | null | undef
 
     max(value:number) : Self {
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
-        if (this._value > value) { throw new ArgError(this._name, `maximum number size exceeded ${this._value} received instead of ${value}`); }
+        if (this._value > value) { throw new ArgError('number-max-value', this._name, value.toString()); }
         return this as unknown as Self;
     }
 
     min(value:number) : Self {
         if (this._value === null || this._value === undefined) { return this as unknown as Self; }
-        if (this._value < value) { throw new ArgError(this._name, `minimum number size not reached ${this._value} received instead of ${value}`); }
+        if (this._value < value) { throw new ArgError('number-min-value', this._name, value.toString()); }
         return this as unknown as Self;
     }
 
     get positive() { 
         if (this.value === null || this.value === undefined) { return this as unknown as Self; }
-        if (this.value < 0) { throw new ArgError(this._name, 'number must be positive'); }
+        if (this.value < 0) { throw new ArgError('number-min-value', this._name, '0'); }
         return this as unknown as Self;
     }
 
     get negative() {
         if (this.value === null || this.value === undefined) { return this as unknown as Self; }
-        if (this.value > 0) { throw new ArgError(this._name, 'number must be negative'); }
+        if (this.value > 0) { throw new ArgError('number-max-value', this._name, '0'); }
         return this as unknown as Self;
     }
 
     get integer() {
         if (this.value === null || this.value === undefined) { return this as unknown as Self; }
-        if (!Number.isSafeInteger(this.value)) { throw new ArgError(this._name, 'number must be integer'); }
+        if (!Number.isSafeInteger(this.value)) { throw new ArgError('number-not-integer', this._name); }
         return this as unknown as Self;
     }
 
@@ -52,11 +52,11 @@ export class NumberOptionalNullable extends BaseNumberValidator<NumberOptionalNu
 
     constructor(value: unknown, name: string) {
         if (value === undefined || value === null) { super(value, name); } 
-        else if (Array.isArray(value)) { throw new ArgError(name, 'array not allowed'); } 
-        else if (typeof value === 'object') { throw new ArgError(name, 'object not allowed'); }
+        else if (Array.isArray(value)) { throw new ArgError('array-not-allowed', name); }
+        else if (typeof value === 'object') { throw new ArgError('object-not-allowed', name); }
         else {
             const num = Number(value);
-            if (isNaN(num)) { throw new ArgError(name, 'number required'); } 
+            if (isNaN(num)) { throw new ArgError('number-required', name); }
             else { super(num, name); }
         }
     }
@@ -66,18 +66,18 @@ export class NumberOptionalNullable extends BaseNumberValidator<NumberOptionalNu
     }
 
     get required() : NumberRequiredNullable {
-        if (this._value === undefined) { throw new ArgError(this._name, 'undefined not allowed'); }
+        if (this._value === undefined) { throw new ArgError('undefined-not-allowed', this._name); }
         return new NumberRequiredNullable(this._value, this._name);
     }
 
     get index() : NumberRequiredNotnull {
-        if (this._value === undefined) { throw new ArgError(this._name, 'undefined not allowed'); }
-        if (this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
+        if (this._value === undefined) { throw new ArgError('undefined-not-allowed', this._name); }
+        if (this._value === null) { throw new ArgError('null-not-allowed', this._name); }
         return new NumberRequiredNotnull(this._value, this._name).integer.positive;
     }
 
     get notnull() : NumberOptionalNotnull {
-        if (this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
+        if (this._value === null) { throw new ArgError('null-not-allowed', this._name); }
         return new NumberOptionalNotnull(this._value, this._name);
     }
 }
@@ -89,7 +89,7 @@ export class NumberRequiredNullable extends BaseNumberValidator<NumberRequiredNu
     }
 
     get notnull() : NumberRequiredNotnull {
-        if (this._value === null) { throw new ArgError(this._name, 'null not allowed'); }
+        if (this._value === null) { throw new ArgError('null-not-allowed', this._name); }
         return new NumberRequiredNotnull(this._value, this._name);
     }
 }
@@ -101,7 +101,7 @@ export class NumberOptionalNotnull extends BaseNumberValidator<NumberOptionalNot
     }
 
     get required() : NumberRequiredNotnull {
-        if (this._value === undefined) { throw new ArgError(this._name, 'undefined not allowed'); }
+        if (this._value === undefined) { throw new ArgError('undefined-not-allowed', this._name); }
         return new NumberRequiredNotnull(this._value, this._name);
     }
 }
