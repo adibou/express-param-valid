@@ -10,6 +10,7 @@ import { KeyOfOptionalNullable } from './keyof';
 import { EnumOptionalNullable } from './valid-enum';
 import { ObjectArrayOptionalNullable } from './valid-object-array';
 import { ObjectOptionalNullable } from './valid-object';
+import { DateOptionalNullable } from './valid-date';
 
 export default class ValidBase {
     value: unknown;
@@ -40,6 +41,8 @@ export default class ValidBase {
     get objectIdArray() { return new ObjectIdArrayOptionalNullable(this.value, this.name); }
 
     get password() { return new PasswordOptionalNullable(this.value, this.name); }
+
+    get date() { return new DateOptionalNullable(this.value, this.name); }
 
     keyof(obj : Record<string, any>) { return new KeyOfOptionalNullable(this.value, this.name, obj); }
 

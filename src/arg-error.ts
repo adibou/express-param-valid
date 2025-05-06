@@ -55,6 +55,10 @@ export const errorCodes = {
     'email-required': 'The argument is not a valid email address',
     'pattern-not-matching': 'The argument does not match the pattern',
     'item-pattern-not-matching': 'One of the items does not match the pattern',
+
+    'date-past': 'The date is in the future',
+    'date-future': 'The date is in the past',
+    'date-utc-required': 'The date is not in UTC format',
 }
 
 export class  ArgError extends FullArgError {
