@@ -42,7 +42,7 @@ abstract class BaseStringValidator<Self, ValueType extends string | null | undef
     }
 
     get email() {
-        if (this.value === null || this.value === undefined) { return this; }
+        if (this.value === null || this.value === undefined || this.value === '')  { return this; }
         if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(this.value)) {  throw new ArgError('email-required', this._name); }
         return this;
     }
@@ -54,7 +54,7 @@ abstract class BaseStringValidator<Self, ValueType extends string | null | undef
     }
 
     pattern( pattern:RegExp) {
-        if (this.value === null || this.value === undefined) { return this; }
+        if (this.value === null || this.value === undefined || this.value === '') { return this; }
         if (!pattern.test(this.value)) { throw new ArgError('pattern-not-matching', this._name); }
         return this;
     }

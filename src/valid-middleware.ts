@@ -15,4 +15,4 @@ export default function catchArgs(err: Error, req: Request, res: Response, next:
     } else {
         next(err); 
     }
-}
+}   

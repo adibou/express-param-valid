@@ -85,7 +85,7 @@ export class NumberArrayOptionalNullable extends BaseNumberArrayValidator<Number
             value.filter(v => v !== null && v !== undefined).forEach(v => {
                 if (Array.isArray(v)) { throw new ArgError('item-array-not-allowed', name); }
                 if (typeof v === 'object') { throw new ArgError('item-object-not-allowed', name); }
-                const num = Number(value);
+                const num = Number(v);
                 if (isNaN(num)) { throw new ArgError('item-number-required', name); }
                 arr.push(num);
             });
