@@ -11,7 +11,11 @@ abstract class BaseBooleanValidator<ValueType extends boolean | null | undefined
     }
 
     default(def :boolean) {
-        if (this.value === null || this.value === undefined) { new BooleanRequiredNotnull(def, this._name); } else { return new BooleanRequiredNotnull(this.value, this._name); }
+        if (this.value === null || this.value === undefined) { 
+            return new BooleanRequiredNotnull(def, this._name); 
+        } else { 
+            return new BooleanRequiredNotnull(this.value, this._name); 
+        }
     }
 
     abstract get value(): ValueType;

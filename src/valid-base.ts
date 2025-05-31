@@ -11,6 +11,7 @@ import { EnumOptionalNullable } from './valid-enum';
 import { ObjectArrayOptionalNullable } from './valid-object-array';
 import { ObjectOptionalNullable } from './valid-object';
 import { DateOptionalNullable } from './valid-date';
+import { EnumArrayOptionalNullable } from './valid-enum-array';
 
 export default class ValidBase {
     value: unknown;
@@ -47,6 +48,8 @@ export default class ValidBase {
     keyof(obj : Record<string, any>) { return new KeyOfOptionalNullable(this.value, this.name, obj); }
 
     enum<T>(values:ReadonlyArray<string>) { return new EnumOptionalNullable<T>(this.value, this.name, values); }
+
+    enumArray<T>(values:ReadonlyArray<string>) { return new EnumArrayOptionalNullable<T>(this.value, this.name, values); }
 
     objectArray<T>(validator:(value:any) => T) { return new ObjectArrayOptionalNullable<T>(this.value, this.name, validator); }
 
