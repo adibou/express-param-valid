@@ -12,6 +12,7 @@ import { ObjectArrayOptionalNullable } from './valid-object-array';
 import { ObjectOptionalNullable } from './valid-object';
 import { DateOptionalNullable } from './valid-date';
 import { EnumArrayOptionalNullable } from './valid-enum-array';
+import { MetasOptionalNullable } from './valid-metas';
 
 export default class ValidBase {
     value: unknown;
@@ -44,6 +45,8 @@ export default class ValidBase {
     get password() { return new PasswordOptionalNullable(this.value, this.name); }
 
     get date() { return new DateOptionalNullable(this.value, this.name); }
+
+    get metas() { return new MetasOptionalNullable(this.value, this.name); }
 
     keyof(obj : Record<string, any>) { return new KeyOfOptionalNullable(this.value, this.name, obj); }
 

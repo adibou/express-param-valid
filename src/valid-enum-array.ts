@@ -24,7 +24,7 @@ export class EnumArrayOptionalNullable<T> extends BaseObjectIdArrayValidator<T, 
             value.filter(v => v !== null && v !== undefined).forEach(v => {
                 if (Array.isArray(v)) { throw new ArgError('item-array-not-allowed', name) }
                 else if (typeof v === 'object') { throw new ArgError('item-object-not-allowed', name) }
-                else if (values.indexOf(value.toString()) === -1) { throw new ArgError('invalid-key', name); }
+                else if (values.indexOf(v.toString()) === -1) { throw new ArgError('invalid-key', name); }
                 arr.push(v as T);
             });
             super(arr, name);

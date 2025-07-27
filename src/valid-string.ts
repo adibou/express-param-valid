@@ -1,4 +1,7 @@
 import { ArgError } from './arg-error';
+import luhnChecker from './checkers/luhn-checker';
+import ibanChecker from './checkers/iban-cheker';
+import nirChecker from './checkers/nir-checker';
 
 abstract class BaseStringValidator<Self, ValueType extends string | null | undefined> {
     protected _value: ValueType;
@@ -46,6 +49,48 @@ abstract class BaseStringValidator<Self, ValueType extends string | null | undef
         if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(this.value)) {  throw new ArgError('email-required', this._name); }
         return this;
     }
+
+    get rpps() {
+        if (this.value == null || this.value === '' || this.value === undefined) { return this; }
+        const num = this.value.replace(/\s+/g, '');
+        // 11 chiffres + Luhn
+        if (!/^\d{11}$/.test(num) || !luhnChecker(num)) {
+            throw new ArgError('rpps-required', this._name);
+        }
+        return this;
+    }
+
+    get iban() {
+        if (this.value == null || this.value === '' || this.value === undefined) { return this; }
+        const iban = this.value.replace(/\s+/g, '').toUpperCase();
+        // 2 lettres + 2 chiffres + 4 lettres + 10 chiffres
+        if (!/^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$/.test(iban) || !ibanChecker(iban)) {
+            throw new ArgError('iban-required', this._name);
+        }
+        return this;
+    }
+
+    get nir() {
+        if (this.value == null || this.value === '' || this.value === undefined) { return this; }
+        const raw = this.value.replace(/\s+/g, '').toUpperCase();
+        const nirRe = /^[12]\d{2}(0[1-9]|1[0-2]|[2-9]\d)(0[1-9]|[1-8]\d|9[0-8]|2A|2B|99)\d{3}\d{3}\d{2}$/;
+        if (!nirRe.test(raw) || !nirChecker(raw)) {
+            throw new ArgError('nir-required', this._name);
+        }
+        return this;
+    }
+
+    get phoneFR() {
+        if (this.value == null || this.value === '' || this.value === undefined) { return this; }
+        const digits = this.value.replace(/[\s.-]/g, '');
+        const frRe = /^(?:0[1-9]\d{8}|(?:\+33|0033)[1-9]\d{8})$/;
+
+        if (!frRe.test(digits)) {
+            throw new ArgError('phoneFR-required', this._name);
+        }
+        return this;
+    }
+
 
     get hasContent() : StringRequiredNotnull {
         if (this._value === undefined) { throw new ArgError('undefined-not-allowed', this._name); }

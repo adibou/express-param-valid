@@ -53,9 +53,12 @@ export const errorCodes = {
     'item-string-max-length': 'One of the items is too long',
     'item-email-required': 'One of the items is not a valid email address',
     'email-required': 'The argument is not a valid email address',
+    'rpps-required': 'The argument is not a valid RPPS number',
+    'iban-required': 'The argument is not a valid IBAN number',
+    'nir-required': 'The argument is not a valid NIR number',
     'pattern-not-matching': 'The argument does not match the pattern',
     'item-pattern-not-matching': 'One of the items does not match the pattern',
-
+    'phoneFR-required': 'The argument is not a valid French phone number',
     'date-past': 'The date is in the future',
     'date-future': 'The date is in the past',
     'date-utc-required': 'The date is not in UTC format',
